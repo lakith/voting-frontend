@@ -9,12 +9,14 @@ import thunk from 'redux-thunk';
 import {Provider} from 'react-redux';
 import AuthReducer from './store/reducer/authReducer'
 import DepartmentReducer from './store/reducer/departmentReducer'
+import VoteReducer from './store/reducer/voteReducer'
 
 const composeEnhancers = process.env.NODE_ENV === 'development' ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : null || compose;
 
 const rootReducer = combineReducers({
     auth : AuthReducer,
-    dept : DepartmentReducer
+    dept : DepartmentReducer,
+    vote : VoteReducer
 })
 
 const logger = store => {

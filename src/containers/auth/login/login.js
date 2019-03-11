@@ -59,9 +59,9 @@ class Login extends Component {
     render(){
 
         let username = this.state.username.value;
-        console.log(username)
+        //console.log(username)
         let password = this.state.password.value;
-        console.log(password)
+       // console.log(password)
 
         let setRedirect = null
         if(this.props.isAuthenticated){
@@ -70,9 +70,9 @@ class Login extends Component {
 
         return(
             <div>
-            <Grid textAlign="center" verticalAlign="middle" className="app">
+            <Grid textAlign="center" verticalAlign="middle" className="app" >
             {setRedirect} 
-            <Grid.Column  style={{maxWidth:500}}>
+            <Grid.Column  style={{maxWidth:500,marginTop:"10%"}}>
                 <Header as="h1" icon color="orange" textAlign="center">
                     <Icon name="code branch" color='violet' />
                         Login to RSVP

@@ -24,7 +24,7 @@ const deptSubmitSuccess = (state,action) => {
     })
     console.log(dept);
 
-    return updatedObject(state,{loading:false,errors:null,departments:dept})
+    return updatedObject(state,{loading:false,depError:null,departments:dept})
 }
 
 const deptSubmitErrors = (state,action) => {

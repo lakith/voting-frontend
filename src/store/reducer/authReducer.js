@@ -44,6 +44,14 @@ const authFail = (state,action) => {
     })
 }
 
+const authLogout = (state,action) => {
+    return updatedObject (state,{
+        loading:false,
+        errors:null,
+        accessToken:null,
+        userData:null
+    })
+}
 
 
 const reducer = (state = initialState,action)=>{
@@ -60,6 +68,8 @@ const reducer = (state = initialState,action)=>{
             return authLogin(state,action);
         case authActions.AUTH_FAIL:
             return authFail(state,action);
+        case authActions.AUTH_LOGOUT:
+            return authLogout(state,action);
         default:
             return state;
     }

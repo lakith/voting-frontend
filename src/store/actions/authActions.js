@@ -8,6 +8,7 @@ export const authStart = () => {
 }
 
 export const authSuccess = (userData,accessToken) => {
+    console.log("auth success");
     return{
         type:authActions.AUTH_SUCCCESS,
         userData:userData,
@@ -35,6 +36,7 @@ export const setAuthSubmitRedirectPath = () => {
 }
 
 export const authFail = (error) => {
+    console.log("auth Fail");
     return {
         type:authActions.AUTH_FAIL,
         error:error
@@ -68,6 +70,7 @@ export const authLogin = (username,password) => {
         };
         axios.post("staffUser/login",authData)
             .then(response => {
+                console.log(response);
                 const expiratioDate = new Date(new Date().getTime()+response.data.expiration);
                 localStorage.setItem('accessToken',response.data.authToken.accessToken);
                 localStorage.setItem('refreshToken',response.data.authToken.refreshToken);
@@ -87,8 +90,8 @@ export const authLogin = (username,password) => {
                 }
                 dispatch(authSuccess(userData,response.data.authToken.accessToken))
                 dispatch(checkAuthTimeOut(response.data.expiration))
-            })
-            .catch(error=> {
+            }).catch(error=> {
+                console.log(error.response);
                 dispatch(authFail(error))
             })
     }
@@ -123,3 +126,48 @@ export const authSubmit = (userData,userType) => {
         }
     }
 }
+
+export const authCheckState = () => {
+    return dispatch => {
+        const token = localStorage.getItem('accessToken');
+        if(!token) {
+            dispatch(logout());
+        } else {
+                localStorage.getItem('refreshToken');
+                localStorage.getItem('expirationDate');
+                localStorage.getItem('userId')
+            const expiratioDate = new Date(localStorage.getItem('expirationDate'));
+            if(expiratioDate > new Date()){
+               // const refresh = localStorage.getItem('refreshToken');
+                axios({
+                    method:'get',
+                    url:'/staffUser/getUserFromToken',
+                    headers: {
+                        Authorization: 'Bearer ' + token
+                      }
+
+                }).then((response) => {
+                    console.log(response.data)
+                    let userData = {
+                        userId: response.data.userId,
+                        name : response.data.name,
+                        email : response.data.email,
+                        username : response.data.userName,
+                        userRole : {
+                            roleId: response.data.userRole.roleId,
+                            roleType: response.data.userRole.roleType
+                        },
+                        profileUrl:response.data.profileUrl
+                    }
+                    dispatch(authSuccess(userData,token))
+                    dispatch(checkAuthTimeOut((expiratioDate.getTime() - new Date().getTime())/1000))
+                }).catch((err)=>{
+                    dispatch(authFail(err.response.data.message))
+                })
+            } else {
+                dispatch(logout())
+            }
+        }
+    }
+}
+

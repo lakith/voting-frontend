@@ -13,6 +13,7 @@ class Register extends Component {
         passwordConfirmation: "",
         name:"",
         userType:"COMPETITOR",
+        userTopic:"GENERAL",
         value:"",
         validationErrors:[]
     }
@@ -114,9 +115,9 @@ class Register extends Component {
 
     switchUserState = () => {
         if(this.state.userType === "COMPETITOR"){
-            this.setState({userType:"GENERAL"});
+            this.setState({userType:"GENERAL",userTopic:"COMPETITOR"});
         } else {
-            this.setState({userType:"COMPETITOR"});
+            this.setState({userType:"COMPETITOR",userTopic:"GENERAL"});
         }
     }
 
@@ -135,7 +136,10 @@ class Register extends Component {
         if(this.props.authSubmitRedirect) {  
             setRedirect =  <Redirect to="/login" />
         }
-
+        let ridirectLogged = null
+        if(this.props.accessToken){
+            ridirectLogged = <Redirect to="/" />
+        }
         let body = null
 
         if(this.props.deptLoad){
@@ -148,13 +152,14 @@ class Register extends Component {
             body = (
                 <Grid textAlign="center" verticalAlign="middle" className="app">
                 {setRedirect}
+                {ridirectLogged}
                 <Grid.Column  style={{maxWidth:500}}>
                     <Header as="h1" icon style={{color:"#bf00ff"}} textAlign="center">
                         <Icon name="puzzle piece"  style={{color:"#bf00ff"}} />
                             Register for Voting
                     </Header>
                     <Header as="h3" icon color='orange' textAlign="center">
-                            Register as a {this.state.userType.toLowerCase()} user
+                            Register as a {this.state.userTopic.toLowerCase()} user
                     </Header>
                     <Form size="large" onSubmit={this.handleSubmit}>
                         <Segment stacked>
@@ -192,7 +197,8 @@ const mapStateToProps = (state) => {
         submit:state.auth.submit,
         authSubmitRedirect:state.auth.authSubmitRedirect,
         departments: state.dept.departments,
-        deptLoad:state.dept.loading
+        deptLoad:state.dept.loading,
+        accessToken:state.auth.accessToken
     }
  };
 

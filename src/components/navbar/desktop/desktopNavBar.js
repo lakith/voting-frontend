@@ -9,10 +9,13 @@ import {
   Responsive,
   Segment,
   Visibility,
+  Header,
 } from 'semantic-ui-react'
 import HomepageHeading from '../../../containers/home/homeHeading/HomeHeading';
 import getWidth from '../getWidth';
-import Footer from '../../footer/Footer';
+import {Link} from 'react-router-dom';
+import {connect} from 'react-redux'
+
 
 
 
@@ -25,7 +28,40 @@ class DesktopContainer extends Component {
     render() {
       const { children } = this.props
       const { fixed } = this.state
-  
+      
+      console.log(this.props.isAuthenticated)
+      let user = {...this.props.user}
+      console.log(user)
+
+      let jsxvars = (
+        <div>
+          <Link to="/login">
+              <Button as='h4' inverted={!fixed}>
+                      Log in 
+             </Button>
+          </Link>
+          <Link to="/register">
+              <Button as='h4' inverted={!fixed} primary={fixed} style={{ marginLeft: '0.5em' }}>
+                        Sign Up
+              </Button> 
+          </Link>
+        </div>
+      )
+      if(this.props.isAuthenticated){
+        jsxvars = (
+          <Header as='h4'>
+               <Image circular src='https://cdn3.iconfinder.com/data/icons/business-round-flat-vol-1-1/36/user_account_profile_avatar_person_student_male-512.png' /> Signed in as {user.name}
+          </Header>
+        )
+      }
+
+      let logout = null;
+      if(this.props.isAuthenticated){
+        logout = (
+          <Link to="/logout"><a style={{textDecoration:"none",color:"white"}}>Logout</a></Link>
+        )
+      }
+
       return (
         <Responsive getWidth={getWidth} minWidth={Responsive.onlyTablet.minWidth}>
           <Visibility
@@ -55,18 +91,16 @@ class DesktopContainer extends Component {
                           </div>
                   </Menu.Item>
                   <Menu.Item className="textStyle" style={{marginLeft:40 ,paddingBottom:22}} as='a' >
-                    Home
+                  <Link to="/"> Home </Link>
                   </Menu.Item>
-                  <Menu.Item className="textStyle"  as='a' text style={{paddingBottom:22}}>Work</Menu.Item>
-                  <Menu.Item className="textStyle" as='a' style={{paddingBottom:22}}>Company</Menu.Item>
-                  <Menu.Item className="textStyle" as='a' style={{paddingBottom:22}}>Careers</Menu.Item>
+                  <Menu.Item className="textStyle"  as='a' text style={{paddingBottom:22}}><Link to="/competation">Add your vote </Link></Menu.Item>
+                  <Menu.Item className="textStyle" as='a' style={{paddingBottom:22}}><Link to="/competitors">Competitor analysis</Link></Menu.Item>
+                  <Menu.Item className="textStyle" as='a' style={{paddingBottom:22}}><Link to="/department">Department</Link></Menu.Item>
                   <Menu.Item position='right'>
-                    <Button as='h4' inverted={!fixed}>
-                      Log in
-                    </Button>
-                    <Button as='a' inverted={!fixed} primary={fixed} style={{ marginLeft: '0.5em' }}>
-                      Sign Up
-                    </Button>
+                    {jsxvars}
+                  </Menu.Item>
+                  <Menu.Item position='right' style={{marginBottom:"1%"}}>
+                    {logout}
                   </Menu.Item>
                 </Container>
               </Menu>
@@ -83,4 +117,11 @@ class DesktopContainer extends Component {
     children: PropTypes.node,
   }
 
-  export default DesktopContainer;
+  const mapStateToProps = state => {
+    return{
+      isAuthenticated : state.auth.accessToken != null,
+      user: state.auth.userData
+    }
+  };
+
+  export default  connect(mapStateToProps)(DesktopContainer);
